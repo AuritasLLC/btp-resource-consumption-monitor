@@ -195,7 +195,7 @@ async function api_getJobs() {
  * For Kyma, there will only be Destination Service Instance destinations, from which we can copy the credentials to create a subaccount destination.
  * @param host Endpoint/URL of the exposed srv application
  */
-async function createSubaccountDestinationIfNotExist(host: string) {
+export async function createSubaccountDestinationIfNotExist(host: string) {
     const destinationName = 'btprc-srv'
 
     const destinationService = filterServices({ label: 'destination' })[0]
@@ -229,7 +229,8 @@ async function createSubaccountDestinationIfNotExist(host: string) {
         await DestinationsOnSubaccountLevelApi
             .createSubaccountDestinations(destination)
             .execute(serviceDestination)
-        info(`Subaccount destination "${destinationName}" created:`, destination)
+        // Never log the destination object itself: it carries the XSUAA client secret
+        info(`Subaccount destination "${destination.Name}" created.`)
     }
 }
 

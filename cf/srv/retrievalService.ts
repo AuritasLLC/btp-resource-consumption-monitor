@@ -1105,7 +1105,7 @@ async function retrieveCreditDetails() {
     try {
         creditDetails.length > 0 && await INSERT.into(CloudCreditsDetails).entries(creditDetails)
     } catch (error) {
-        info('Attempted data insert:', creditDetails)
+        info(`Attempted data insert of ${creditDetails.length} contract items failed.`)
         throw error
     }
 
