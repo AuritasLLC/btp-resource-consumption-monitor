@@ -834,7 +834,8 @@ async function updateCommercialMetricForecasts(serviceId?: string) {
     let status = ''
     if (cds.env.requires.db.kind == 'hana') {
         // Use single SQL query that can be executed in HANA (faster)
-        const where = serviceId ? ` WHERE (SERVICEID = '${serviceId}')` : ''
+       
+        const where = serviceId ? ` WHERE (SERVICEID = ?)` : ''
         const onClause =
             `sourceTable.REPORTYEARMONTH        = targetTable.TOMETRIC_TOSERVICE_REPORTYEARMONTH 
             AND sourceTable.RETRIEVED           = targetTable.TOMETRIC_TOSERVICE_RETRIEVED
@@ -854,7 +855,7 @@ async function updateCommercialMetricForecasts(serviceId?: string) {
             `MERGE INTO ${CommercialMeasures.name.replace('.', '_')} AS targetTable
             USING (SELECT * FROM ${prepareCommercialMeasureMetricForecasts.name.replace('.', '_')}${where}) AS sourceTable
             ON ${onClause} WHEN MATCHED THEN UPDATE SET ${updateClause}`
-        const rows = await db.run(sql)
+        const rows = await db.run(sql, serviceId ? [serviceId] : [])
         status = `${rows} forecasts updated in the database (hana optimized).`
     } else {
         // Fallback approach which routes the data via the application layer (slower)
@@ -905,9 +906,10 @@ async function updateCommercialServiceForecasts(serviceId?: string) {
     let status = ''
     if (cds.env.requires.db.kind == 'hana') {
         // Use single SQL query that can be executed in HANA (faster)
-        const where = serviceId ? ` WHERE (toMetric_toService_serviceId = '${serviceId}')` : ''
+        // serviceId is client input: always pass it as a bound parameter, never interpolate it into the SQL text
+        const where = serviceId ? ` WHERE (toMetric_toService_serviceId = ?)` : ''
         const sql = `UPSERT ${CommercialMeasures.name.replace('.', '_')} SELECT * FROM ${prepareCommercialMeasureServiceForecasts.name.replace('.', '_')}${where}`
-        const rows = await db.run(sql)
+        const rows = await db.run(sql, serviceId ? [serviceId] : [])
         status = `${rows} data points updated in the database (hana optimized).`
     } else {
         // Fallback approach which routes the data via the application layer (slower)
