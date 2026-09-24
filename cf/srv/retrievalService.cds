@@ -222,7 +222,9 @@ service RetrievalService {
     function resetForecastSettings()                                    returns String;
     function resetTechnicalAllocations()                                returns String;
     function calculateCommercialForecasts()                             returns String;
-    function calculateCommercialForecastsForService(serviceId : String) returns String;
+    function calculateCommercialForecastsForService(
+        @assert.format: '^[A-Za-z0-9._ -]{1,100}$'
+        serviceId : String) returns String;
     function deleteAllData()                                            returns String;
     function deleteStructureAndTagData()                                returns String;
     function testAlert(ID : UUID, isDraft : Boolean)                    returns types.TAlertSimulation;
