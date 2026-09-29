@@ -217,13 +217,39 @@ service RetrievalService {
             toItem
         };
 
+    @requires: [
+        'Administrator',
+        'system-user'
+    ]
     function downloadMeasuresForToday()                                 returns String;
+
+    @requires: [
+        'Administrator',
+        'system-user'
+    ]
     function downloadMeasuresForPastMonths(fromDate : Integer)          returns String;
+
+    @requires: 'Administrator'
     function resetForecastSettings()                                    returns String;
+
+    @requires: 'Administrator'
     function resetTechnicalAllocations()                                returns String;
+
+    @requires: 'Administrator'
     function calculateCommercialForecasts()                             returns String;
+
+    @requires: 'Administrator'
     function calculateCommercialForecastsForService(serviceId : String) returns String;
+
+    @requires: 'Administrator'
     function deleteAllData()                                            returns String;
+
+    @requires: 'Administrator'
     function deleteStructureAndTagData()                                returns String;
+
+    @requires: [
+        'Viewer',
+        'Administrator'
+    ]
     function testAlert(ID : UUID, isDraft : Boolean)                    returns types.TAlertSimulation;
 }

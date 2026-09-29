@@ -69,6 +69,8 @@ From 2.0.2 to 2.1.0, only the Backend and Fiori applications have been changed, 
 
 After the upgrade, make sure to assign the backend role again to the end users.
 
+> **Note on the new `Administrator` role:** the back-end used to grant every operation to the single `Viewer` role. Retrieving measures, maintaining settings and deleting data now require the new `BTPResourceConsumption Administrator` role collection. After the upgrade, assign it to the users who administer the application, otherwise those operations are rejected with `403 Forbidden`. See [Role Assignments](#role-assignments).
+
 ## Download and Installation
 
 This solution contains 3 installable components:
@@ -245,7 +247,18 @@ In the **Work Zone Site Manager**, open the `Site Directory` and:
 In the **BTP Cockpit**, go to the Security settings of your subaccount and assign the below 3 `Role Collections` to your user:
 - `~btprc.cpkg_access_role` to access the Work Zone content (front-end)
 - (optional) `~btprc.cpkg_sac_role` to access the SAC add-on Work Zone content (front-end)
-- `BTPResourceConsumption Viewer` to access the CF Application (back-end)
+- `BTPResourceConsumption Viewer` **or** `BTPResourceConsumption Administrator` to access the CF Application (back-end)
+
+The back-end distinguishes two roles:
+
+| Role Collection | May do |
+|---|---|
+| `BTPResourceConsumption Viewer` | Read the report, the analytics, the alerts and the tags |
+| `BTPResourceConsumption Administrator` | Everything a Viewer may do, plus retrieve measures on demand, recalculate forecasts, maintain the forecasting and technical allocation settings, and delete services, metrics and all data |
+
+Assign `BTPResourceConsumption Administrator` to the users who set the application up and maintain it, and `BTPResourceConsumption Viewer` to everyone who only consumes the report. The `Administrator` role collection includes the `Viewer` scope, so it does not need to be assigned in addition.
+
+A user holding only the `Viewer` role still sees the administrative buttons in the report (*Retrieve Measures*, *Delete All Data*, ...) because the SAP Fiori elements client does not hide actions based on roles. The server rejects those calls with `403 Forbidden`.
 
 In case you activated the SAC content as well, make sure that each user that will be using the solution also has a SAC user.
 
@@ -282,6 +295,13 @@ cds-ts watch --profile hybrid
 Open your browser to http://localhost:4004 where you will find the relevant `Web Applications`.
 
 **Tip:** This will connect to the HANA Cloud database. In case you want to use a local sqlite database for testing, run `cds-ts deploy -2 sqlite`, and remove the binding to `btprc-db` from the `.cdsrc-private.json` file.
+
+## Run the Tests
+The tests verify that the `Viewer` and `Administrator` roles are enforced on the services. They run against an in-memory sqlite database with mocked users and do not need any service binding:
+```cmd
+# from the cf folder:
+npm test
+```
 
 ## Architecture
 ![BTP Architecture](./btprc-architecture.png)
