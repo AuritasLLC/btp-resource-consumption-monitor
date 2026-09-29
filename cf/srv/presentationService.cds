@@ -64,6 +64,7 @@ service PresentationService {
             interval
         actions {
             @Common.IsActionCritical
+            @requires: 'Administrator'
             action deleteBTPService();
         };
 
@@ -83,6 +84,7 @@ service PresentationService {
         }
         actions {
             @Common.SideEffects: {TargetEntities: [in]}
+            @requires           : 'Administrator'
             action SetForecastSetting(
                                       @(UI.ParameterDefaultValue:in.forecastSetting.method)
                                       method : types.TSetForecastSettingParams:method,
@@ -93,6 +95,7 @@ service PresentationService {
                                       degressionFactor : types.TSetForecastSettingParams:degressionFactor);
 
             @Common.IsActionCritical
+            @requires: 'Administrator'
             //TODO: UI refresh after delete
             action deleteCommercialMetric();
 
@@ -202,8 +205,11 @@ service PresentationService {
 
     function getLatestBTPAccountMeasure() returns AggregatedCommercialMeasures;
     function getTileInfo()                returns types.TDynamicAppLauncher;
+
+    @requires: 'Administrator'
     action   proxy_downloadMeasuresForToday();
 
+    @requires: 'Administrator'
     action   proxy_downloadMeasuresForPastMonths( @(
                                                       assert.range:[
                                                           201001,
@@ -213,18 +219,23 @@ service PresentationService {
                                                       title:'Load from which month'
                                                   ) fromDate : String);
 
+    @requires: 'Administrator'
     action   proxy_calculateCommercialForecasts();
 
     @Common.IsActionCritical
+    @requires: 'Administrator'
     action   proxy_resetForecastSettings();
 
     @Common.IsActionCritical
+    @requires: 'Administrator'
     action   proxy_resetTechnicalAllocations();
 
     @Common.IsActionCritical
+    @requires: 'Administrator'
     action   proxy_deleteAllData();
 
     @Common.IsActionCritical
+    @requires: 'Administrator'
     action   proxy_deleteStructureAndTagData();
 
     /**

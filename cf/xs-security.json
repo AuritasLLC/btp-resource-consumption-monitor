@@ -10,15 +10,28 @@
     {
       "name": "$XSAPPNAME.Viewer",
       "description": "Viewer"
+    },
+    {
+      "name": "$XSAPPNAME.Administrator",
+      "description": "Administrator"
     }
   ],
   "attributes": [],
   "role-templates": [
     {
       "name": "Viewer",
-      "description": "Role to access the application",
+      "description": "Role to access the application in read-only mode",
       "scope-references": [
         "$XSAPPNAME.Viewer"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "Administrator",
+      "description": "Role to access the application and to trigger data retrieval, maintain settings and delete data",
+      "scope-references": [
+        "$XSAPPNAME.Viewer",
+        "$XSAPPNAME.Administrator"
       ],
       "attribute-references": []
     }
@@ -29,6 +42,13 @@
       "description": "View the BTP Global Account credits report",
       "role-template-references": [
         "$XSAPPNAME.Viewer"
+      ]
+    },
+    {
+      "name": "BTPResourceConsumption Administrator",
+      "description": "View the BTP Global Account credits report and administer its data and settings",
+      "role-template-references": [
+        "$XSAPPNAME.Administrator"
       ]
     }
   ]

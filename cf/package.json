@@ -36,6 +36,7 @@
   },
   "scripts": {
     "start": "cds-serve",
+    "test": "CDS_ENV=test node --require ts-node/register --test \"test/**/*.test.js\"",
     "build:cf": "rimraf @cds-models resources mta_archives gen && cds-ts build --production",
     "build:kyma": "cp -r kyma/ui-deployer gen && cp -r resources gen/ui-deployer",
     "cf:pack": "mbt build",
@@ -69,6 +70,35 @@
         "db": {
           "kind": "sqlite",
           "url": "db.sqlite"
+        }
+      },
+      "[test]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "test-viewer": {
+              "roles": [
+                "Viewer"
+              ]
+            },
+            "test-administrator": {
+              "roles": [
+                "Viewer",
+                "Administrator"
+              ]
+            },
+            "test-scheduler": {
+              "roles": [
+                "system-user"
+              ]
+            }
+          }
+        },
+        "db": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": ":memory:"
+          }
         }
       },
       "db": {
